@@ -13,12 +13,24 @@ const createJestConfig = nextJest({
 
 /** @type {import('jest').Config} */
 const config = {
+  // Runs before the test framework loads, so fetch/Request/Response exist
+  // as globals by the time msw/node is imported.
+  setupFiles: ['<rootDir>/jest.polyfills.ts'],
+
   // Runs after the test framework is installed, so `expect` exists and
   // jest-dom can extend it.
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
   // React Testing Library needs a DOM.
   testEnvironment: 'jsdom',
+
+  // jest-environment-jsdom resolves package "exports" using a `browser`
+  // condition by default, which points msw's interceptors at their
+  // browser-only ESM build instead of the Node one. Clearing this makes
+  // it use the default (node) condition instead.
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
 
   // Colocated tests (Counter.test.tsx next to Counter.tsx) plus a __tests__ dir.
   testMatch: [
