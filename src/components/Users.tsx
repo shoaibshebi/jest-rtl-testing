@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from "react";
 
-type Props = { fetchUsers: () => Promise<string[]> };
+type Props = { fetchUsers?: () => Promise<string[]> };
 
-export default function Users({ fetchUsers }: Props) {
+const defaultFetchUsers = () => fetch('/api/users').then((r) => r.json());
+
+function Users({ fetchUsers = defaultFetchUsers }: Props) {
   const [users, setUsers] = useState<string[]>([]);
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [reload, setReload] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    fetchUsers()
+    fetchUsers && fetchUsers()
       .then((r) => { if (!cancelled) { setUsers(r); setState('ready'); } })
       .catch(() => !cancelled && setState('error'));
     return () => { cancelled = true; };
@@ -34,3 +36,5 @@ export default function Users({ fetchUsers }: Props) {
   if (users.length === 0) return <p>No users yet.</p>;
   return <ul aria-label="Users">{users.map((u) => <li key={u}>{u}</li>)}</ul>;
 }
+
+export default Users

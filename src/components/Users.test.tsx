@@ -1,13 +1,9 @@
 import { render, screen } from "@testing-library/react"
 import Users from "./Users"
 import userEvent from "@testing-library/user-event"
+import { server } from "./__fixtures__/server"
+import { http, HttpResponse } from "msw"
 // import { server } from "./__fixtures__/server"
-
-
-
-
-
-
 
 describe('mock the calls using jest fn and msw',()=>{
     it('loading', async()=>{
@@ -51,7 +47,18 @@ describe('mock the calls using jest fn and msw',()=>{
 })
 
 
-
 describe("testing by mock service worcker",()=>{
+    it('renders users from the api', async()=>{
+        render(<Users />)
 
+        expect(await screen.findByRole('list',{name:'Users'})).toBeInTheDocument()
+    })
+
+    it('shows and eror when the api fails',async()=>{
+        server.use(http.get('/api/users', ()=> new HttpResponse(null,{status:500})))
+
+        render(<Users/>)
+
+        expect(await screen.findByRole('alert')).toBeInTheDocument()
+    })
 })
