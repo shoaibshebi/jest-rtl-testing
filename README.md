@@ -1,4 +1,4 @@
-# Samjho — Testing ki poori kahani (Roman Urdu)
+# Samjho — Testing ki poori kahani
 
 Ye file un dono projects ko asaan zubaan mein samjhati hai jo humne banaye:
 `~/Documents/playwright-testing` aur `~/Documents/jest-rtl-testing`.
